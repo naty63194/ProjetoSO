@@ -3,10 +3,11 @@ from cgitb import text
 from tkinter import *
 from tkinter import font
 
-from tkinter import ttk
+from tkinter import ttk 
 
 #importando TKcalendar
 from tkcalendar import Calendar, DateEntry
+
 
 co0 = "#f0f3f5"  # Preta
 co1 = "#feffff"  # branca
