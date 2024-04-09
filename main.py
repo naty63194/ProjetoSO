@@ -79,47 +79,50 @@ b_atualizar.place(x=105, y=280)
 b_deletar= Button(frame_baixo,text="Deletar", width=9, anchor= NW, font= ('Ivy 9 bold'),bg=co7, fg= co1, relief='raised', overrelief='ridge')
 b_deletar.place(x=200, y=280)
 
+def mostrar():
 #FRAME DIREITA
-lista = [[1,'Joao Futi Muanda','joao@mail.com', 123456789, "12/19/2010"],
-           [2,'Fortnato Mpngo', 'joao@mail.com', 123456789, "12/19/2010"],
-           [3,'Usando Python',  'joao@mail.com', 123456789, "12/19/2010"],
-           [4,'Clinton Berclidio', 'joao@mail.com', 123456789, "12/19/2010"],
-           [5,'A traicao da Julieta','joao@mail.com', 123456789, "12/19/2010"]
-           ]
+    lista = [[1,'Joao Futi Muanda','joao@mail.com', 123456789, "12/19/2010"],
+            [2,'Fortnato Mpngo', 'joao@mail.com', 123456789, "12/19/2010"],
+            [3,'Usando Python',  'joao@mail.com', 123456789, "12/19/2010"],
+            [4,'Clinton Berclidio', 'joao@mail.com', 123456789, "12/19/2010"],
+            [5,'A traicao da Julieta','joao@mail.com', 123456789, "12/19/2010"]
+            ]
 
-#lista para o cabecario
-tabela_head =['ID', 'Nome','Email','Telefone', 'Data']
+    #lista para o cabecario
+    tabela_head =['ID', 'Nome','Email','Telefone', 'Data']
 
-#criando tabela
-tree = ttk.Treeview(frame_direita, selectmode='extended', columns=tabela_head, show='headings')
+    #criando tabela
+    tree = ttk.Treeview(frame_direita, selectmode='extended', columns=tabela_head, show='headings')
 
-#vertical scrollbar
-vsb= ttk.Scrollbar(frame_direita, orient='vertical', command=tree.yview)
+    #vertical scrollbar
+    vsb= ttk.Scrollbar(frame_direita, orient='vertical', command=tree.yview)
 
-#horizontal scrollbar
-hsb= ttk.Scrollbar(frame_direita, orient='horizontal', command=tree.xview)
+    #horizontal scrollbar
+    hsb= ttk.Scrollbar(frame_direita, orient='horizontal', command=tree.xview)
 
-tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+    tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
-tree.grid(column=0,row=0,sticky='nsew')
-vsb.grid(column=1,row=0,sticky='ns')
-hsb.grid(column=0,row=1,sticky='ew')
+    tree.grid(column=0,row=0,sticky='nsew')
+    vsb.grid(column=1,row=0,sticky='ns')
+    hsb.grid(column=0,row=1,sticky='ew')
 
-frame_direita.grid_rowconfigure(0, weight=12)
+    frame_direita.grid_rowconfigure(0, weight=12)
 
-hd=['nw','nw','nw', 'nw', 'nw']
-h=[30,170,140,100, 120]
-n=0
+    hd=['nw','nw','nw', 'nw', 'nw']
+    h=[30,170,140,100, 120]
+    n=0
 
-for col in tabela_head:
-    tree.heading(col, text=col.title(), anchor=CENTER)
-    
-    tree.column(col, width=h[n], anchor=hd[n])
-    
-    n+=1
+    for col in tabela_head:
+        tree.heading(col, text=col.title(), anchor=CENTER)
+        
+        tree.column(col, width=h[n], anchor=hd[n])
+        
+        n+=1
 
-for item in lista:
-    tree.insert('', "end", values=item)
+    for item in lista:
+        tree.insert('', "end", values=item)
+
+
 
 
 
