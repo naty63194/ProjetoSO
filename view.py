@@ -6,18 +6,26 @@ con = lite.connect('dados.db')
 lista=['Joao Futi Muanda','joao@mail.com', 123456789, "12/19/2010"]
 
 #inserir informacoes
-with con:
-    cur =con.cursor()
-    query='INSERT INTO formulario(nome, email, telefone, dia_em) VALUES(?,?,?,?)'
-    cur.execute(query, lista)
+def inserir_info(i):
+    with con:
+        cur =con.cursor()
+        query='INSERT INTO formulario(nome, email, telefone, dia_em) VALUES(?,?,?,?)'
+        cur.execute(query,i)
+
 
 #acessar informações
-with con:
-    cur =con.cursor()
-    query="SELECT * FROM formulario"
-    cur.execute(query)
-    informacao=cur.fetchall()
-    print(informacao)
+def mostrar_info():
+    lista =[]
+    with con:
+        cur =con.cursor()
+        query="SELECT * FROM formulario"
+        cur.execute(query)
+        informacao=cur.fetchall()
+        
+        for i in informacao:
+            lista.append(i)
+    return lista
+            
 
 #atualizar informacoes
 with con:

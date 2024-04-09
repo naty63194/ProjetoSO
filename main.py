@@ -4,11 +4,15 @@ from tkinter import *
 from tkinter import font
 
 from tkinter import ttk 
+from tkinter import messagebox
 
 #importando TKcalendar
 from tkcalendar import Calendar, DateEntry
 
+#importando views
+from view import * 
 
+#cores
 co0 = "#f0f3f5"  # Preta
 co1 = "#feffff"  # branca
 co2 = "#4fa882"  # verde
@@ -42,6 +46,34 @@ frame_direita.grid(row=0, column=1, rowspan=2, padx= 1, pady=0, sticky=NSEW)
 app_nome= Label(frame_cima,text="Formulário de Consultoria", anchor= NW, font= ('Ivy 13 bold'),bg=co2, fg= co1, relief='flat')
 app_nome.place(x=10, y=20)
 
+
+#funcao inserir
+def inserir():
+    nome= e_nome.get()
+    email= e_email.get()
+    telefone= e_telefone.get()
+    dia= e_cal.get()
+
+    lista = [nome, email, telefone, dia]
+    
+    if nome == " ":
+        messagebox.showerror("ERRO", "O nome não pode ser vazio")
+    else: 
+        inserir_info(lista)
+        messagebox.showinfo("Sucesso", "Os dados foram inseridos")
+        
+        e_nome.delete(0,"end")
+        e_email.delete(0,"end")
+        e_telefone.edelete(0,"end")
+        e_cal.delete(0,"end")
+        
+    for widget in frame_direita.winfo_children():
+        widget.destroy()
+        
+    mostrar()
+
+
+    
 # configurando frame baixo
 #nome
 l_nome= Label(frame_baixo,text="Nome", anchor= NW, font= ('Ivy 10 bold'),bg=co3, fg= co0, relief='flat')
@@ -68,7 +100,7 @@ e_cal= DateEntry(frame_baixo, width=12, background='darkblue', foreground='white
 e_cal.place(x=15, y=220)
 
 #botão inserir
-b_inserir= Button(frame_baixo,text="Enviar", width=9, anchor= NW, font= ('Ivy 9 bold'),bg=co6, fg= co1, relief='raised', overrelief='ridge')
+b_inserir= Button(frame_baixo,command=inserir, text="Enviar", width=9, anchor= NW, font= ('Ivy 9 bold'),bg=co6, fg= co1, relief='raised', overrelief='ridge')
 b_inserir.place(x=15, y=280)
 
 #botão atualizar 
@@ -79,14 +111,9 @@ b_atualizar.place(x=105, y=280)
 b_deletar= Button(frame_baixo,text="Deletar", width=9, anchor= NW, font= ('Ivy 9 bold'),bg=co7, fg= co1, relief='raised', overrelief='ridge')
 b_deletar.place(x=200, y=280)
 
+#frame direita
 def mostrar():
-#FRAME DIREITA
-    lista = [[1,'Joao Futi Muanda','joao@mail.com', 123456789, "12/19/2010"],
-            [2,'Fortnato Mpngo', 'joao@mail.com', 123456789, "12/19/2010"],
-            [3,'Usando Python',  'joao@mail.com', 123456789, "12/19/2010"],
-            [4,'Clinton Berclidio', 'joao@mail.com', 123456789, "12/19/2010"],
-            [5,'A traicao da Julieta','joao@mail.com', 123456789, "12/19/2010"]
-            ]
+    lista = mostrar_info()
 
     #lista para o cabecario
     tabela_head =['ID', 'Nome','Email','Telefone', 'Data']
@@ -126,4 +153,5 @@ def mostrar():
 
 
 
+mostrar()
 janela.mainloop()
