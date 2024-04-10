@@ -1,10 +1,13 @@
-# Importando as bibliotecas necessárias
+# Importação do módulo datetime
+from datetime import datetime
+
+# Importação das bibliotecas necessárias
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 from tkcalendar import Calendar, DateEntry
 from view import mostrar_info, inserir_info, atualizar_info, deleta_info
 
-# Cores
+# Definição das cores utilizadas na interface
 co0 = "#f0f3f5"  # Preta
 co1 = "#feffff"  # Branca
 co2 = "#4fa882"  # Verde
@@ -18,12 +21,12 @@ co9 = "#e9edf5"  # Sky blue
 
 # Criando a janela principal
 janela = Tk()
-janela.title("Formulário de Consultoria")
-janela.geometry('1043x453')
+janela.title("Formulário de Consulta")
+janela.geometry('890x453')
 janela.configure(background=co9)
 janela.resizable(width=False, height=False)
 
-# Dividindo a janela em frames
+# Divisão da janela em frames
 frame_cima = Frame(janela, width=310, height=50, bg=co2, relief='flat')
 frame_cima.grid(row=0, column=0)
 
@@ -33,46 +36,47 @@ frame_baixo.grid(row=1, column=0, padx=0, pady=1)
 frame_direita = Frame(janela, width=518, height=403, bg=co1, relief='flat')
 frame_direita.grid(row=0, column=1, rowspan=2, padx=1, pady=0, sticky=NSEW)
 
-# Função para mostrar os dados
+# Criação da tabela utilizando o widget Treeview
+tabela_head = ['ID', 'Nome', 'Email', 'Telefone', 'Data']
+tree = ttk.Treeview(frame_direita, selectmode='extended', columns=tabela_head, show='headings')
+
+# Adição de scrollbars à tabela
+vsb = ttk.Scrollbar(frame_direita, orient='vertical', command=tree.yview)
+hsb = ttk.Scrollbar(frame_direita, orient='horizontal', command=tree.xview)
+
+tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
+tree.grid(column=0, row=0, sticky='nsew')
+vsb.grid(column=1, row=0, sticky='ns')
+hsb.grid(column=0, row=1, sticky='ew')
+
+frame_direita.grid_rowconfigure(0, weight=1)
+
+# Definição das larguras das colunas da tabela
+hd = ['nw', 'nw', 'nw', 'nw', 'nw']
+h = [30, 170, 140, 100, 120]
+n = 0
+
+for col in tabela_head:
+    tree.heading(col, text=col.title(), anchor=CENTER)
+    tree.column(col, width=h[n], anchor=hd[n])
+    n += 1
+
+# Função para mostrar os dados na tabela
 def mostrar():
+    # Limpa os itens existentes na árvore
+    for item in tree.get_children():
+        tree.delete(item)
+
     lista = mostrar_info()
-
-    # Lista para o cabeçalho
-    tabela_head = ['ID', 'Nome', 'Email', 'Telefone', 'Data']
-
-    # Criando a tabela
-    tree = ttk.Treeview(frame_direita, selectmode='extended', columns=tabela_head, show='headings')
-
-    # Scrollbars
-    vsb = ttk.Scrollbar(frame_direita, orient='vertical', command=tree.yview)
-    hsb = ttk.Scrollbar(frame_direita, orient='horizontal', command=tree.xview)
-
-    tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
-
-    tree.grid(column=0, row=0, sticky='nsew')
-    vsb.grid(column=1, row=0, sticky='ns')
-    hsb.grid(column=0, row=1, sticky='ew')
-
-    frame_direita.grid_rowconfigure(0, weight=1)
-
-    hd = ['nw', 'nw', 'nw', 'nw', 'nw']
-    h = [30, 170, 140, 100, 120]
-    n = 0
-
-    for col in tabela_head:
-        tree.heading(col, text=col.title(), anchor=CENTER)
-        tree.column(col, width=h[n], anchor=hd[n])
-        n += 1
-
+    
     for item in lista:
         tree.insert('', "end", values=item)
 
-    return tree  # Retornar o tree
+# Atribuição do retorno da função mostrar() à variável tree
+mostrar()
 
-# Atribuir o retorno da função mostrar() à variável tree
-tree = mostrar()
-
-# Função para inserir dados
+# Função para inserir dados na tabela
 def inserir():
     nome = e_nome.get()
     email = e_email.get()
@@ -92,20 +96,19 @@ def inserir():
         e_telefone.delete(0, END)
         e_cal.delete(0, END)
 
-        for widget in frame_direita.winfo_children():
-            widget.destroy()
-
         mostrar()
 
-# Função para atualizar dados
+# Função para atualizar dados na tabela
 def atualizar():
     try:
+        # Obter o item selecionado na tabela
         treev_dados = tree.focus()
         treev_dicionario = tree.item(treev_dados)
         treev_lista = treev_dicionario["values"]
 
         valor_id = treev_lista[0]
 
+        # Limpar os campos de entrada e preenchê-los com os dados selecionados
         e_nome.delete(0, END)
         e_email.delete(0, END)
         e_telefone.delete(0, END)
@@ -116,6 +119,7 @@ def atualizar():
         e_telefone.insert(0, treev_lista[3])
         e_cal.insert(0, treev_lista[4])
 
+        # Função para atualizar os dados após a confirmação
         def update():
             nome = e_nome.get()
             email = e_email.get()
@@ -135,23 +139,21 @@ def atualizar():
                 e_telefone.delete(0, END)
                 e_cal.delete(0, END)
 
-                for widget in frame_direita.winfo_children():
-                    widget.destroy()
-                
-                
                 mostrar()
 
-        b_confirmar = Button(frame_baixo, command=update, text="Confirmar", width=10, anchor=NW, font=('Ivy 7 bold'),
+        # Botão de confirmação da atualização
+        b_confirmar = Button(frame_baixo, command=update, text="Confirmar", width=10, anchor=NW, font=('Ivy 8 bold'),
                              bg=co2, fg=co1, relief='raised', overrelief='ridge')
-        b_confirmar.place(x=110, y=370)
+        b_confirmar.place(x=105, y=320)
 
     except IndexError:
         messagebox.showerror("ERRO", "Selecione um dos dados na tabela")
 
 
-#funcao deletar
+# Função para deletar dados da tabela
 def deletar():
     try:
+        # Obter o item selecionado na tabela
         treev_dados = tree.focus()
         treev_dicionario = tree.item(treev_dados)
         treev_lista = treev_dicionario["values"]
@@ -161,15 +163,12 @@ def deletar():
         deleta_info(valor_id)
         messagebox.showinfo("Sucesso", "Os dados foram deletados")
         
-        for widget in frame_direita.winfo_children():
-                    widget.destroy()
-                    
         mostrar()
         
     except IndexError:
         messagebox.showerror("ERRO", "Selecione um dos dados na tabela")
     
-# Configurando o frame baixo
+# Configuração dos widgets de entrada na parte inferior do frame
 # Nome
 l_nome = Label(frame_baixo, text="Nome", anchor=NW, font=('Ivy 10 bold'), bg=co3, fg=co0, relief='flat')
 l_nome.place(x=10, y=10)
@@ -194,23 +193,18 @@ l_cal.place(x=10, y=190)
 e_cal = DateEntry(frame_baixo, width=12, background='darkblue', foreground='white', borderwidth=2, year=2024)
 e_cal.place(x=15, y=220)
 
-# Botão inserir
+# Botões para inserir, atualizar, deletar e gerar extrato
 b_inserir = Button(frame_baixo, command=inserir, text="Enviar", width=9, anchor=NW, font=('Ivy 9 bold'), bg=co6,
                    fg=co1, relief='raised', overrelief='ridge')
 b_inserir.place(x=15, y=280)
 
-# Botão atualizar
 b_atualizar = Button(frame_baixo, command=atualizar, text="Atualizar", width=9, anchor=NW, font=('Ivy 9 bold'),
                      bg=co2, fg=co1, relief='raised', overrelief='ridge')
 b_atualizar.place(x=105, y=280)
 
-# Botão deletar
 b_deletar = Button(frame_baixo, command=deletar, text="Deletar", width=9, anchor=NW, font=('Ivy 9 bold'), bg=co7, fg=co1,
                    relief='raised', overrelief='ridge')
 b_deletar.place(x=200, y=280)
-
-# Função para criar o arquivo TXT com os dados da tabela
-from datetime import datetime
 
 def gerar_extrato():
     # Obter os dados da tabela
@@ -241,14 +235,10 @@ def gerar_extrato():
         # Exibir uma mensagem de sucesso
         messagebox.showinfo("Sucesso", "O arquivo foi gerado com sucesso.")
 
-
 # Botão para gerar o extrato
-b_gerar_extrato = Button(frame_baixo, command=gerar_extrato, text="Gerar Extrato", width=15, anchor=NW,
+b_gerar_extrato = Button(frame_baixo, command=gerar_extrato, text="Gerar Extrato", width=11, anchor=NW,
                          font=('Ivy 9 bold'), bg=co8, fg=co1, relief='raised', overrelief='ridge')
-b_gerar_extrato.place(x=105, y=375)
+b_gerar_extrato.place(x=105, y=350)
 
 # Iniciar o loop principal da interface gráfica
 janela.mainloop()
-
-
-
