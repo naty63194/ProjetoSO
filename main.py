@@ -1,6 +1,6 @@
 # Importando as bibliotecas necessárias
 from tkinter import *
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from tkcalendar import Calendar, DateEntry
 from view import mostrar_info, inserir_info, atualizar_info, deleta_info
 
@@ -209,5 +209,46 @@ b_deletar = Button(frame_baixo, command=deletar, text="Deletar", width=9, anchor
                    relief='raised', overrelief='ridge')
 b_deletar.place(x=200, y=280)
 
+# Função para criar o arquivo TXT com os dados da tabela
+from datetime import datetime
+
+def gerar_extrato():
+    # Obter os dados da tabela
+    dados = mostrar_info()
+
+    # Abrir o diálogo para selecionar o local de salvamento do arquivo
+    arquivo_salvo = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Arquivo de Texto", "*.txt")])
+
+    # Verificar se o usuário selecionou um local para salvar o arquivo
+    if arquivo_salvo:
+        # Abrir o arquivo em modo de escrita
+        with open(arquivo_salvo, "w") as arquivo:
+            # Escrever o título "EXTRATO" em negrito
+            arquivo.write("**EXTRATO**\n\n")
+
+            # Escrever os dados da tabela em forma de tabela
+            colunas = ['ID', 'Nome', 'Email', 'Telefone', 'Data']
+            arquivo.write("{:<5} {:<25} {:<30} {:<15} {:<12}\n".format(*colunas))
+            arquivo.write("=" * 87 + "\n")
+            for linha in dados:
+                arquivo.write("{:<5} {:<25} {:<30} {:<15} {:<12}\n".format(*linha))
+            arquivo.write("\n")
+
+            # Adicionar a data de geração do arquivo
+            data_atual = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            arquivo.write("Data de geração do arquivo: {}\n".format(data_atual))
+
+        # Exibir uma mensagem de sucesso
+        messagebox.showinfo("Sucesso", "O arquivo foi gerado com sucesso.")
+
+
+# Botão para gerar o extrato
+b_gerar_extrato = Button(frame_baixo, command=gerar_extrato, text="Gerar Extrato", width=15, anchor=NW,
+                         font=('Ivy 9 bold'), bg=co8, fg=co1, relief='raised', overrelief='ridge')
+b_gerar_extrato.place(x=105, y=375)
+
 # Iniciar o loop principal da interface gráfica
 janela.mainloop()
+
+
+
